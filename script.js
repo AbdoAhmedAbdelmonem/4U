@@ -4,30 +4,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const errorMessage = document.getElementById('errorMessage');
     const otpInputs = document.querySelectorAll('.otp-input');
     const submitBtn = document.querySelector('.submit-btn');
-    
+
     const STORED_HASH = "170460";
-    
+
     function simpleHash(input) {
         let hash = 0;
         if (input.length === 0) return hash.toString(16);
-        
+
         for (let i = 0; i < input.length; i++) {
             const char = input.charCodeAt(i);
             hash = ((hash << 5) - hash) + char;
             hash = hash & hash;
         }
-        
+
         return hash.toString(16);
     }
-    
+
     function checkPassword() {
         let enteredPassword = '';
         otpInputs.forEach(input => {
             enteredPassword += input.value;
         });
-        
+
         const enteredHash = simpleHash(enteredPassword);
-        
+
         if (enteredHash === STORED_HASH) {
             passwordContainer.style.opacity = '0';
             setTimeout(() => {
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 input.style.borderColor = '#ff4d6d';
             });
             otpInputs[0].focus();
-            
+
             setTimeout(() => {
                 otpInputs.forEach(input => {
                     input.style.borderColor = 'rgba(255, 255, 255, 0.3)';
@@ -54,13 +54,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function moveToNext(input) {
         const value = input.value;
         const index = parseInt(input.dataset.index);
-        
+
         if (value.length === 1) {
             if (index < 3) {
                 otpInputs[index + 1].focus();
             }
         }
-        
+
         errorMessage.textContent = '';
     }
 
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const slides = document.querySelectorAll('.slide');
         const floatingShapes = document.getElementById('floatingShapes');
         const creativeBtn = document.querySelector('.creative-btn');
-        
+
         let currentSlide = 0;
         const slideDuration = 4000;
         let autoSlideInterval;
@@ -94,11 +94,11 @@ document.addEventListener('DOMContentLoaded', function() {
         function createFloatingShapes() {
             const shapeTypes = ['shape-circle', 'shape-triangle'];
             const fragment = document.createDocumentFragment();
-            
+
             for (let i = 0; i < 15; i++) {
                 const shape = document.createElement('div');
                 const shapeType = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
-                
+
                 Object.assign(shape.style, {
                     width: `${Math.random() * 50 + 20}px`,
                     height: `${Math.random() * 50 + 20}px`,
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     animationDelay: `${Math.random() * 5}s`,
                     opacity: Math.random() * 0.1 + 0.05
                 });
-                
+
                 shape.className = `shape ${shapeType}`;
                 fragment.appendChild(shape);
             }
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function createSparkles(element, count) {
             const fragment = document.createDocumentFragment();
-            
+
             for (let i = 0; i < count; i++) {
                 const sparkle = document.createElement('div');
                 Object.assign(sparkle.style, {
@@ -151,13 +151,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 setTimeout(() => {
                     const heart = document.createElement('div');
                     heart.innerHTML = '💛';
-                    
+
                     const startX = Math.random() * 100;
                     const size = Math.random() * 30 + 20;
                     const duration = Math.random() * 6 + 4;
                     const delay = Math.random() * 2;
                     const opacity = Math.random() * 0.7 + 0.3;
-                    
+
                     heart.style.cssText = `
                         position: absolute;
                         bottom: -50px;
@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         transform: translateX(-50%);
                         animation: floatUp ${duration}s ease-in ${delay}s forwards;
                     `;
-                    
+
                     bubbleContainer.appendChild(heart);
 
                     setTimeout(() => {
@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (currentActive) {
                 currentActive.classList.remove('active');
                 currentActive.classList.add('exiting');
-                
+
                 setTimeout(() => {
                     currentActive.classList.remove('exiting');
                 }, 1500);
@@ -221,7 +221,7 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 slides[currentSlide].classList.add('entering');
                 void slides[currentSlide].offsetWidth;
-                
+
                 setTimeout(() => {
                     slides[currentSlide].classList.add('active');
                     slides[currentSlide].classList.remove('entering');
@@ -249,13 +249,16 @@ document.addEventListener('DOMContentLoaded', function() {
         if (creativeBtn) {
             creativeBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = 'scale(1)';
-                }, 200);
-                
-                createHeartBubbles();
+
+                // Only allow the button to be clicked if it's on the active last slide
+                if (currentSlide === slides.length - 1 && slides[currentSlide].classList.contains('active')) {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 200);
+
+                    createHeartBubbles();
+                }
             });
         }
 
@@ -271,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.creative-element').forEach((el, index) => {
             createSparkles(el, el.id === 'actionSparkles' ? 20 : 15);
         });
-        
+
         startAutoSlide();
     }
 });
