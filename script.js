@@ -1,15 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Elements
     const passwordContainer = document.getElementById('passwordContainer');
     const mainContent = document.getElementById('mainContent');
     const errorMessage = document.getElementById('errorMessage');
     const otpInputs = document.querySelectorAll('.otp-input');
     const submitBtn = document.querySelector('.submit-btn');
     
-    // Security configuration
     const STORED_HASH = "170460";
     
-    // Simple MD5 hash function (for demonstration)
     function simpleHash(input) {
         let hash = 0;
         if (input.length === 0) return hash.toString(16);
@@ -23,7 +20,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return hash.toString(16);
     }
     
-    // 1. PASSWORD PROTECTION ======================================
     function checkPassword() {
         let enteredPassword = '';
         otpInputs.forEach(input => {
@@ -68,7 +64,6 @@ document.addEventListener('DOMContentLoaded', function() {
         errorMessage.textContent = '';
     }
 
-    // Event listeners for password protection
     otpInputs.forEach(input => {
         input.addEventListener('input', function() {
             moveToNext(this);
@@ -86,20 +81,16 @@ document.addEventListener('DOMContentLoaded', function() {
     submitBtn.addEventListener('click', checkPassword);
     otpInputs[0].focus();
 
-    // 2. MAIN CONTENT INITIALIZATION =============================
     function initializeMainContent() {
-        // Elements
         const slides = document.querySelectorAll('.slide');
         const floatingShapes = document.getElementById('floatingShapes');
         const creativeBtn = document.querySelector('.creative-btn');
         
-        // State variables
         let currentSlide = 0;
-        const slideDuration = 1000;
+        const slideDuration = 4000;
         let autoSlideInterval;
         let isFinalSlide = false;
 
-        // VISUAL EFFECTS =========================================
         function createFloatingShapes() {
             const shapeTypes = ['shape-circle', 'shape-triangle'];
             const fragment = document.createDocumentFragment();
@@ -142,9 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
             element.appendChild(fragment);
         }
 
-        // NEW: Water bubble hearts animation
         function createHeartBubbles() {
-            // Create container for bubbles
             const bubbleContainer = document.createElement('div');
             bubbleContainer.style.cssText = `
                 position: fixed;
@@ -158,13 +147,11 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
             document.body.appendChild(bubbleContainer);
 
-            // Create multiple heart bubbles
             for (let i = 0; i < 30; i++) {
                 setTimeout(() => {
                     const heart = document.createElement('div');
                     heart.innerHTML = '💛';
                     
-                    // Random starting position at bottom
                     const startX = Math.random() * 100;
                     const size = Math.random() * 30 + 20;
                     const duration = Math.random() * 6 + 4;
@@ -183,20 +170,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     bubbleContainer.appendChild(heart);
 
-                    // Remove heart after animation completes
                     setTimeout(() => {
                         heart.remove();
                     }, (duration + delay) * 1000);
-                }, i * 200); // Stagger creation
+                }, i * 200);
             }
 
-            // Remove container after all animations complete
             setTimeout(() => {
                 bubbleContainer.remove();
             }, 30 * 200 + 6000);
         }
 
-        // Add CSS for the animation
         const style = document.createElement('style');
         style.textContent = `
             @keyframes floatUp {
@@ -216,7 +200,6 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         document.head.appendChild(style);
 
-        // SLIDESHOW SYSTEM =======================================
         function showSlide(n) {
             if (n >= slides.length - 1 && !isFinalSlide) {
                 isFinalSlide = true;
@@ -263,18 +246,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        // EVENT LISTENERS ========================================
         if (creativeBtn) {
             creativeBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 
-                // Button press effect
                 this.style.transform = 'scale(0.95)';
                 setTimeout(() => {
                     this.style.transform = 'scale(1)';
                 }, 200);
                 
-                // Create heart bubbles instead of the old animation
                 createHeartBubbles();
             });
         }
@@ -287,7 +267,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // INITIALIZATION =========================================
         createFloatingShapes();
         document.querySelectorAll('.creative-element').forEach((el, index) => {
             createSparkles(el, el.id === 'actionSparkles' ? 20 : 15);
