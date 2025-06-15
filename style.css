@@ -22,7 +22,6 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Password Protection Screen */
         .password-container {
             position: fixed;
             top: 0;
@@ -70,10 +69,9 @@
             margin-bottom: 30px;
         }
 
-        /* Remove spinner arrows from number inputs */
         .otp-inputs input[type="number"] {
             -moz-appearance: textfield;
-            appearance: textfield; /* Firefox */
+            appearance: textfield;
         }
 
         .otp-inputs input[type="number"]::-webkit-outer-spin-button,
@@ -126,7 +124,6 @@
             font-size: 0.9rem;
         }
 
-        /* Main Content (hidden initially) */
         .main-content {
             display: none;
         }
