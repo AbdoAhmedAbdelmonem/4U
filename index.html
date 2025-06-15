@@ -154,31 +154,6 @@
         </div>
       </div>
     </div>
-
-    <script>
-      // Countdown timer function
-      function updateCountdown() {
-        const targetDate = new Date('August 10, 2025 00:00:00').getTime();
-        const now = new Date().getTime();
-        const timer = document.getElementById('countdown-timer');
-        const distance = targetDate - now;
-
-        timer.style.fontSize = '1rem';
-
-        if (distance < 0) {
-          timer.innerHTML = "! الرقم السري هو تاريخ ميلادك 1008";
-          return;
-        }
-
-        const seconds = Math.floor(distance / 1000);
-
-        timer.innerHTML = `متبقي  ${seconds} ثانية حتي الانطلاق التلقائي`;
-      }
-
-      // Update the countdown every second
-      setInterval(updateCountdown, 1000);
-      updateCountdown(); // Initial call
-    </script>
     <script src="script.js"></script>   
   </body>
 </html>
