@@ -290,4 +290,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
         startAutoSlide();
     }
+          function updateCountdown() {
+        const targetDate = new Date('August 10, 2025 00:00:00').getTime();
+        const now = new Date().getTime();
+        const timer = document.getElementById('countdown-timer');
+        const distance = targetDate - now;
+
+        timer.style.fontSize = '1rem';
+
+        if (distance < 0) {
+          timer.innerHTML = "!الرقم السري هو تاريخ اليوم";
+          return;
+        }
+
+        const seconds = Math.floor(distance / 1000);
+
+        timer.innerHTML = `متبقي  ${seconds} ثانية حتي الانطلاق التلقائي`;
+      }
+
+      setInterval(updateCountdown, 1000);
+      updateCountdown();
 });
