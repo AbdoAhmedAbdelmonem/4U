@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const otpInputs = document.querySelectorAll('.otp-input');
     const submitBtn = document.querySelector('.submit-btn');
 
-    const STORED_HASH = "170460";
+    const STORED_HASH = "170067";
 
     function simpleHash(input) {
         let hash = 0;
@@ -56,21 +56,24 @@ document.addEventListener('DOMContentLoaded', function() {
         const index = parseInt(input.dataset.index);
 
         if (value.length === 1) {
-            if (index < 3) {
+            if (index < otpInputs.length - 1) {
                 otpInputs[index + 1].focus();
+            } else {
+                submitBtn.focus();
             }
         }
 
         errorMessage.textContent = '';
     }
 
-    otpInputs.forEach(input => {
+    otpInputs.forEach((input, index) => {
+        input.dataset.index = index;
         input.addEventListener('input', function() {
             moveToNext(this);
         });
-        input.addEventListener('keydown', (e) => {
+        
+        input.addEventListener('keydown', function(e) {
             if (e.key === 'Backspace' && this.value === '') {
-                const index = parseInt(this.dataset.index);
                 if (index > 0) {
                     otpInputs[index - 1].focus();
                 }
@@ -79,6 +82,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     submitBtn.addEventListener('click', checkPassword);
+    
+    // Also allow form submission with Enter key
+    otpInputs.forEach(input => {
+        input.addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+    });
+
     otpInputs[0].focus();
 
     function initializeMainContent() {
