@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const creativeBtn = document.querySelector('.creative-btn');
 
         let currentSlide = 0;
-        const slideDuration = 4000;
+        const slideDuration = 5000;
         let autoSlideInterval;
         let isFinalSlide = false;
 
