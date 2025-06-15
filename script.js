@@ -11,15 +11,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Simple MD5 hash function (for demonstration)
     function simpleHash(input) {
-        // Note: In production, use a more secure hashing algorithm like SHA-256
-        // This is a simplified version for demonstration purposes
         let hash = 0;
         if (input.length === 0) return hash.toString(16);
         
         for (let i = 0; i < input.length; i++) {
             const char = input.charCodeAt(i);
             hash = ((hash << 5) - hash) + char;
-            hash = hash & hash; // Convert to 32bit integer
+            hash = hash & hash;
         }
         
         return hash.toString(16);
@@ -32,11 +30,9 @@ document.addEventListener('DOMContentLoaded', function() {
             enteredPassword += input.value;
         });
         
-        // Hash the entered password and compare with stored hash
         const enteredHash = simpleHash(enteredPassword);
         
         if (enteredHash === STORED_HASH) {
-            // Correct password - show content
             passwordContainer.style.opacity = '0';
             setTimeout(() => {
                 passwordContainer.style.display = 'none';
@@ -44,7 +40,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 initializeMainContent();
             }, 500);
         } else {
-            // Wrong password - show error
             errorMessage.textContent = 'كلمة المرور غير صحيحة';
             otpInputs.forEach(input => {
                 input.value = '';
@@ -52,7 +47,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             otpInputs[0].focus();
             
-            // Reset border color after animation
             setTimeout(() => {
                 otpInputs.forEach(input => {
                     input.style.borderColor = 'rgba(255, 255, 255, 0.3)';
@@ -71,7 +65,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // Clear error when typing
         errorMessage.textContent = '';
     }
 
@@ -91,8 +84,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     submitBtn.addEventListener('click', checkPassword);
-
-    // Auto-focus first password input
     otpInputs[0].focus();
 
     // 2. MAIN CONTENT INITIALIZATION =============================
@@ -100,68 +91,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // Elements
         const slides = document.querySelectorAll('.slide');
         const floatingShapes = document.getElementById('floatingShapes');
-        const bgMusic = document.getElementById('bgMusic');
-        const musicToggle = document.getElementById('musicToggle'); // Ensure this element exists in HTML
         const creativeBtn = document.querySelector('.creative-btn');
         
         // State variables
         let currentSlide = 0;
-        const slideDuration = 4000; // 4 seconds per slide
+        const slideDuration = 1000;
         let autoSlideInterval;
         let isFinalSlide = false;
-        let isMusicPlaying = false;
-        
-        // MUSIC SYSTEM ===========================================
-        // Directly configure and handle music without a separate 'initialized' flag
-        bgMusic.volume = 0.3;
-        bgMusic.loop = true;
-        bgMusic.src = 'https://assets.mixkit.co/music/preview/mixkit-inspiring-cinematic-ambient-1167.mp3';
-        bgMusic.load(); // Load the audio but don't play it yet
-
-        function toggleMusic() {
-            if (isMusicPlaying) {
-                pauseMusic();
-            } else {
-                playMusic();
-            }
-        }
-
-        function playMusic() {
-            bgMusic.play()
-                .then(() => {
-                    isMusicPlaying = true;
-                    musicToggle.innerHTML = '<i class="fas fa-pause"></i>';
-                })
-                .catch(error => {
-                    console.error("Audio playback failed:", error);
-                    // Provide visual feedback if autoplay is blocked
-                    musicToggle.innerHTML = '<i class="fas fa-music"></i> (click to enable)';
-                    musicToggle.style.color = '#ff9a9e';
-                    setTimeout(() => {
-                        musicToggle.style.color = 'white';
-                    }, 2000);
-                });
-        }
-
-        function pauseMusic() {
-            bgMusic.pause();
-            isMusicPlaying = false;
-            musicToggle.innerHTML = '<i class="fas fa-music"></i>';
-        }
-
-        function fadeOutMusic() {
-            if (!isMusicPlaying) return;
-            
-            const fadeInterval = setInterval(() => {
-                if (bgMusic.volume > 0.05) {
-                    bgMusic.volume -= 0.05;
-                } else {
-                    clearInterval(fadeInterval);
-                    pauseMusic();
-                    bgMusic.volume = 0.3; // Reset volume
-                }
-            }, 100);
-        }
 
         // VISUAL EFFECTS =========================================
         function createFloatingShapes() {
@@ -206,52 +142,85 @@ document.addEventListener('DOMContentLoaded', function() {
             element.appendChild(fragment);
         }
 
-        function createHeartAnimation() {
-            // Create heart element
-            const heart = document.createElement('div');
-            heart.innerHTML = '💛';
-            heart.style.cssText = `
+        // NEW: Water bubble hearts animation
+        function createHeartBubbles() {
+            // Create container for bubbles
+            const bubbleContainer = document.createElement('div');
+            bubbleContainer.style.cssText = `
                 position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%) scale(1);
-                font-size: 20px;
-                opacity: 0;
-                z-index: 1000;
-                transition: all 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
                 pointer-events: none;
+                z-index: 1000;
+                overflow: hidden;
             `;
-            document.body.appendChild(heart);
+            document.body.appendChild(bubbleContainer);
 
-            // Trigger animation
-            setTimeout(() => {
-                heart.style.opacity = '1';
-                heart.style.fontSize = '20px';
-                
+            // Create multiple heart bubbles
+            for (let i = 0; i < 30; i++) {
                 setTimeout(() => {
-                    heart.style.fontSize = '2000px';
-                    heart.style.opacity = '0.9';
+                    const heart = document.createElement('div');
+                    heart.innerHTML = '💛';
                     
-                    // Fade out all content
-                    document.querySelectorAll('.slide, .floating-shapes, .music-control').forEach(el => {
-                        el.style.transition = 'opacity 0.8s ease';
-                        el.style.opacity = '0';
-                    });
+                    // Random starting position at bottom
+                    const startX = Math.random() * 100;
+                    const size = Math.random() * 30 + 20;
+                    const duration = Math.random() * 6 + 4;
+                    const delay = Math.random() * 2;
+                    const opacity = Math.random() * 0.7 + 0.3;
+                    
+                    heart.style.cssText = `
+                        position: absolute;
+                        bottom: -50px;
+                        left: ${startX}%;
+                        font-size: ${size}px;
+                        opacity: ${opacity};
+                        transform: translateX(-50%);
+                        animation: floatUp ${duration}s ease-in ${delay}s forwards;
+                    `;
+                    
+                    bubbleContainer.appendChild(heart);
 
-                    // Close window after animation completes
+                    // Remove heart after animation completes
                     setTimeout(() => {
-                        window.location.href = "https://chameleon-nu.vercel.app/";
-                    }, 1500);
-                }, 100);
-            }, 10);
+                        heart.remove();
+                    }, (duration + delay) * 1000);
+                }, i * 200); // Stagger creation
+            }
+
+            // Remove container after all animations complete
+            setTimeout(() => {
+                bubbleContainer.remove();
+            }, 30 * 200 + 6000);
         }
+
+        // Add CSS for the animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes floatUp {
+                0% {
+                    transform: translateX(-50%) translateY(0) scale(0.5);
+                    opacity: 0.3;
+                }
+                50% {
+                    transform: translateX(-50%) translateY(-50vh) scale(1);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translateX(-50%) translateY(-100vh) scale(0.5);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
 
         // SLIDESHOW SYSTEM =======================================
         function showSlide(n) {
             if (n >= slides.length - 1 && !isFinalSlide) {
                 isFinalSlide = true;
                 clearInterval(autoSlideInterval);
-                fadeOutMusic();
             }
 
             const currentActive = document.querySelector('.slide.active');
@@ -268,7 +237,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             setTimeout(() => {
                 slides[currentSlide].classList.add('entering');
-                void slides[currentSlide].offsetWidth; // Trigger reflow for animation
+                void slides[currentSlide].offsetWidth;
                 
                 setTimeout(() => {
                     slides[currentSlide].classList.add('active');
@@ -285,10 +254,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function startAutoSlide() {
             if (!isFinalSlide) {
-                // Immediately show first slide
                 slides[0].classList.add('active');
-                
-                // Start the interval
                 autoSlideInterval = setInterval(() => {
                     if (!document.hidden) {
                         nextSlide();
@@ -298,10 +264,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // EVENT LISTENERS ========================================
-        if (musicToggle) {
-            musicToggle.addEventListener('click', toggleMusic);
-        }
-
         if (creativeBtn) {
             creativeBtn.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -312,24 +274,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.style.transform = 'scale(1)';
                 }, 200);
                 
-                createHeartAnimation();
+                // Create heart bubbles instead of the old animation
+                createHeartBubbles();
             });
         }
 
         document.addEventListener('visibilitychange', function() {
             if (document.hidden) {
                 clearInterval(autoSlideInterval);
-                if (isMusicPlaying) {
-                    bgMusic.pause();
-                }
             } else if (!isFinalSlide) {
                 startAutoSlide();
-                // Attempt to play music only if it was playing and not due to user interaction
-                // For better user experience, often music playback on visibility change should be user-initiated or a soft resume
-                // For simplicity here, we re-attempt playback if it was playing
-                if (isMusicPlaying) {
-                    playMusic().catch(console.error);
-                }
             }
         });
 
@@ -339,7 +293,6 @@ document.addEventListener('DOMContentLoaded', function() {
             createSparkles(el, el.id === 'actionSparkles' ? 20 : 15);
         });
         
-        // Start slideshow
         startAutoSlide();
     }
 });
